@@ -1,0 +1,26 @@
+#Makefile version 4
+#$< the first depend file
+#$? all newer file than the depend file 
+#$@ all target file ,eg. main.o
+
+OBJS = ./main.o \
+		./sub1/dummy1.o \
+		./sub1/dummy2.o \
+		./sub2/dummy3.o \
+		./sub2/dummy4.o
+
+RM := rm -rf
+all : ../bin/make_test
+
+../bin/make_test : $(OBJS)
+	g++ -o $(@) $(^)
+./%.o : ../src/$.cpp
+	g++ -o $(@) -c $(<) -I ../inc
+
+./sub1/%.o : ../src/sub1/%.cpp
+	g++ -o $(@) -c $(<) -I ../inc
+
+./sub2/%.o : ../src/sub2/%.cpp
+	g++ -o $(@) -c $(<) -I ../inc
+.PHONY clean :
+	$(RM) $(OBJS) ../bin/*

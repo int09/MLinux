@@ -1,0 +1,15 @@
+16:24:29 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+Building file: ../test_drv.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"test_drv.d" -MT"test_drv.d" -o "test_drv.o" "../test_drv.cpp"
+Finished building: ../test_drv.cpp
+ 
+Building target: first_cpp
+Invoking: GCC C++ Linker
+g++  -o "first_cpp"  ./SayHello.o ./test_drv.o   
+Finished building target: first_cpp
+ 
+
+16:24:31 Build Finished (took 1s.881ms)
+

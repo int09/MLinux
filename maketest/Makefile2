@@ -1,0 +1,15 @@
+#Makefile version 2
+
+OBJS = ./main.o \
+		./sub1/dummy1.o \
+		./sub1/dummy2.o \
+		./sub2/dummy3.o \
+		./sub2/dummy4.o
+
+RM := rm -rf
+all : ../bin/make_test
+
+../bin/make_test : $(OBJS)
+	g++ -o ../bin/make_test $(OBJS)
+...
+...

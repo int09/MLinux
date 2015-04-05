@@ -1,0 +1,270 @@
+﻿								生产者/消费者程序文档
+
+由一个进程创建三个子进程，三个子进程一个是生产者进程，两个是消费者进程
+父子进程都使用附近城创建的共享存储区进行通信，由生产者讲一个数组中的十
+个数值发送到由5个缓冲区组成的共享内存中，两个消费者进程轮番接收并输出这
+10个数值，同事讲两个消费者进程独处的数值进行累加求和
+
+设计要求的分析：
+1.要求用一个进程创建三个子进程
+解决方案：在Linux系统下提供了fork系统调用，可以通过在main函数中（主进程）调用fork函数来分别三次派生出三个子进程，声明三个pid_t变量用以存储其子进程ID。
+2.三个进程中一个是生产者两个是消费者，父子进程都使用父进程创建的共享存储区进程通信
+解决方案：在父进程中申请共享内存，并将共享内存区映射到一个地址上，通过对这个地址的读写来实现进程间的通信。
+3.由生产者将一个数组中的十个数值发送到由5个缓冲区组成的共享内存中，两个消费者轮流接收并输出这十个数值
+解决方案：定义一个包含十个数值的int型数组，使用for循环10次将十个数字分发到缓冲区中，由于缓冲区有限，所以要在缓冲区不满5个时向缓冲区中添加数据，而当缓冲区满的时候阻塞并通知消费者来消费数据。
+使用PV操作来完成这样的同步。而由于要求“轮流的”从缓冲区中拿走数据，所以对于消费者应该是互斥的访问缓冲区，使用PV来完成这样的互斥。
+具体的PV操作同步与互斥思想如下：
+semaphore sempc[2], semcc[2];	//定义用于同步的信号量集sempc，和用于互斥的信号量semcc
+sempc[0].semval = 5;				//设sempc生产者使用的信号量数值为5，即5个缓冲区大小
+sempc[1].semval = 0;				//设sempc消费者使用的信号量数值为0，开始无法消费
+semcc[0] = semcc[1] = 0;
+/*
+生产者进程，将10个数每次一个填入缓冲区中，并将sempc[0]信号量数值
+减一，如果为零则阻塞，说明已经生产出了5个，达到了满的状态，此时应该
+停止生产，而向sempc加一通知消费者可以进行消费。
+*/
+producer()				
+{						
+	for(i = 1 to 10)
+	{
+		P(sempc[0]);
+		向缓冲区中添加一个数字；
+		V(sempc[1]);
+	}
+} 
+/*
+consumer0则是不断的从缓冲区中拿走数字，但是其操作是与consumer1相
+互斥的，使用semcc[0]和semcc[1]来 保持两个进程的互斥访问，即对于缓
+冲区的读每次只能有一个进程访问，而且一个进程访问后下一次访问必须是另一
+个进程对其访问，所以设置了两个信号量控制。
+*/
+consumer0()
+{
+	while(true)
+	{
+		P(sempc[1]);	//实现同步访问
+		P(semcc[0]);	//将semcc0减一，此时如果consumer1不进行缓冲区读那么这个进程也就不						//能再次读，实现了交替的访问
+		从缓冲区中拿走一个数字；
+		V(semcc[1]);	//通知consumer1可以读缓冲区
+		V(sempc[0]);
+	}
+}
+
+/*
+主要思想同consumer0，由于极大的相似，所以不再赘述
+*/
+consumer1()
+{
+	while(true)
+	{
+		P(sempc[1]);
+		V(semcc[1]);
+		从缓冲区中拿走一个数字；
+		P(semcc[0]);
+		V(sempc[0]);
+	}
+}
+
+具体的PV操作的实现
+/*
+在函数中定义一sembuf结构体变量，然后对其赋值，sem_num为欲操作的信号量在信号量集中的编号
+sem_op为对该信号量的操作，在P操作中，将信号量的数值减一此为-1。返回semop函数，其实本函
+数对semop进行了包装成为了P操作，由于V操作由类似的行为，可以将P和V整合起来合成一个函数
+传入不同参数可更高集成操作。
+*/
+int PO(int semid, int semno)				//P操作
+{
+	struct sembuf buf;						//定义sembuf结构体变量buf，用以控制信号量
+	memset(&buf, 0x00, sizeof(struct sembuf));	//对buf结构体清零
+	buf.sem_num = semno;						//信号量组的第semno个信号量
+	buf.sem_op = -1;							//对该信号量的操作
+	buf.sem_flg = 0;							//信号量操作的标志
+	return semop(semid, &buf, 1);			//返回semop操作函数，完成对信号量的操作
+}
+
+int VO(int semid, int semno)					//V操作
+{
+	struct sembuf buf;							//操作同上PO
+	memset(&buf, 0x00, sizeof(struct sembuf));
+	buf.sem_num = semno;
+	buf.sem_op = 1;			
+	buf.sem_flg = 0;
+	return semop(semid, &buf, 1);
+}
+
+
+
+程序清单：
+相关的代码源文件 syspv.cc以及Makefile和可执行程序syspv均在本目录下
+
+#include <stdio.h>		//包含函数库，以使用共享内存/信号量等
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/shm.h>
+#include <sys/sem.h>
+#include <sys/types.h>
+#include <memory.h>
+
+
+#define		CONSUMER	1	//定义消费者使用的信号量编号
+#define		PRODUCER	0	//定义生产者使用的信号量编号
+
+int array[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};	//定义使用的十个数值
+int PO(int semid, int semno);
+int VO(int semid, int semno);
+
+int main(int argc, char *argv[])
+{
+	
+	pid_t producer;					//定义生产者PID
+	pid_t consumer0, consumer1;		//定义两个消费者的PID
+	
+	int semid;						//信号量的ID
+	int semcc;						//消费者互斥使用的ID信号量
+	key_t key;						//用以作为信号量和共享内存获取的参数
+	if ((key = ftok("etc/profile", 1)) < 0)	//产生key
+	{
+		perror("ftok error");		//错误处理
+		exit(-1);
+	}
+	if ((semid = semget(key, 2, IPC_CREAT | 0666)) < 0)	//获取信号量
+	{
+		perror("semget error");		//错误处理
+		exit(-1);
+	}
+	if ((semcc = semget(key, 2, IPC_CREAT | 0666)) < 0)
+	{
+		perror("semget error");
+		exit(-1);
+	}
+	short input_array[2];			//作为semctl函数的SETALL选项的参数
+	input_array[0] = 5;				//Producer
+	input_array[1] = 0;				//Consumer
+	semctl(semid, 2, SETALL, input_array);	//将两个信号量分别设置为5和0
+	
+	short semcc_array[2];
+	semcc_array[0] = 0;
+	semcc_array[1] = 1;
+	semctl(semcc, 2, SETALL, semcc_array);
+
+	int con0 = 0, con1 = 0;	//累加变量
+	int shmid;						//定义共享内存ID
+	int *buffer;					//5个缓冲区
+	int bufsize = 0;				//标示缓冲区最末的数据
+	//共享内存获取，第一个参数是之前获取的key， 第三个参数说明创建的方式
+	if ((shmid = shmget(key, sizeof(buffer), IPC_CREAT | IPC_EXCL | 0666)) < 0)
+	{
+		perror("shmget error");		//错误处理
+		exit(-1);
+	}
+	(void *)buffer = shmat(shmid, NULL, 0);	//映射到共享内存区
+	
+	
+	if ((producer = fork()) < 0)	//生产者的进程，由主进程派生出的子进程
+	{	
+		perror("producer fork error");	//错误处理
+		exit(-1);
+	}
+	else if (producer == 0)			//如果是子进程
+	{
+		for(int i = 0; i < 10; ++i)
+		{
+			PO(semid, PRODUCER);	//开始生产，使用P将PRODUCER信号量减一
+			buffer[bufsize++] = array[i];	//将10个数据填入缓冲区中
+			VO(semid, CONSUMER);	//V操作consumer通知可以消费了，CONSUMER信号量加一
+		}
+	}
+
+	if ((consumer0 = fork()) < 0)	//消费者0的进程，由主进程派生出的子进程
+	{
+		perror("consumer0 fork error");	//错误处理
+		exit(-1);
+	}
+	else if (consumer0 == 0)		//如果是子进程
+	{
+		while (true)
+		{
+			PO(semid, CONSUMER);	//P操作CONSUMER生产，将CONSUMER信号量减一
+			PO(semcc, PRODUCER);
+			printf("%d\n", buffer[bufsize--]);	//消费一个“产品”
+			VO(semcc, CONSUMER);
+			VO(semid, PRODUCER);	//通知生产者生产，PRODUCER
+		}
+	}
+	
+	if ((consumer1 = fork()) < 0)	//消费者1的进程，由主进程派生出的子进程
+	{
+		perror("consumer1 fork error");	//错误处理
+		exit(-1);
+	}
+	else if (consumer1 == 0)		//如果是子进程
+	{
+		while (true)		
+		{
+			PO(semid, CONSUMER);	//同上
+			VO(semcc, CONSUMER);
+			printf("%d\n", buffer[bufsize--]);	//同上
+			PO(semcc, PRODUCER);
+			VO(semid, PRODUCER);	//同上
+		}
+	}
+	printf("Consumer0 的累加和为%d\n", con0);
+	printf("Consumer1 的累加和为%d\n", con1);
+
+	return 0;
+}
+int PO(int semid, int semno)					//P操作
+{
+	struct sembuf buf;							//定义sembuf结构体变量buf，用以控制信号量
+	memset(&buf, 0x00, sizeof(struct sembuf));	//对buf结构体清零
+	buf.sem_num = semno;						//信号量组的第semno个信号量
+	buf.sem_op = -1;							//对该信号量的操作
+	buf.sem_flg = 0;							//信号量操作的标志
+	return semop(semid, &buf, 1);				//返回semop操作函数，完成对信号量的操作
+}
+
+/*
+sembuf结构体，作为参数向semop函数传递
+struct sembuf {
+	unsigned short sem_num;	//在信号量集中的具体编号
+	short			 sem_op;	//对信号量的具体操作
+	short 			 sem_flg;	//对信号量的附加标志
+}
+*/
+int VO(int semid, int semno)					//V操作
+{
+	struct sembuf buf;							//操作同上PO
+	memset(&buf, 0x00, sizeof(struct sembuf));
+	buf.sem_num = semno;
+	buf.sem_op = 1;			
+	buf.sem_flg = 0;
+	return semop(semid, &buf, 1);
+}
+
+
+运行结果：
+在Ubuntu操作系统下的运行结果如下：
+
+1 
+2 
+3 
+4 
+5 
+6 
+7 
+8 
+9 
+10 
+Consumer0 的累加和为24 
+Consumer1 的累加和为30 
+
+设计心得：
+	
+	本次设计所使用的算法和进程操作的知识均比较的基础，将其原理写出来其实并不难，几行伪代码就可以清楚的表述出来，但是如果将其作为具体的程序写出来，还是有一些难度的，因为在实现的过程中由许多细节需要考虑，比如具体信号量操作所使用的函数/结构体变量，共享内存所返回的地址类型是什么，是void *还是int *，两者应该如何转换成合理的形式而编译器不会报错。以及各种变量的定义和使用/编码的风格都是长期编程的经验所形成的，没有扎实的基本功会对以后的工作有很大的麻烦。所以 继续编程提高基本素质是很重要的。
+	对于参考资料的选择也比较重要，因为具体编码的时间并不是很充分，所以如果没有合适的参考书会对编码产生很坏的影响，比如参考书的代码不规范，原理讲述和实现由较大的差距，作者水平不佳会令读者一头雾水，知其然不知其所以然。
+	对于项目的规划一定要合理，按照软件工程标准完成每一次的课程设计和程序的编写，而不是漫无目的的设计和没有规划的编码，否则对于整个项目的影响是恶劣的。
+	程序的测试也很重要，并不是把程序运行一次发现没有错误就是正确良好的程序，按照软件工程要求的测试方法来测试程序的健壮性/性能至关重要。
+
+
+
+参考资料：《UNIX环境高级编程》

@@ -1,0 +1,8 @@
+#include <iostream>
+#include "SayHello.h"
+using namespace std;
+int main()
+{
+	cout << "hello " << endl;
+	return 0;
+}

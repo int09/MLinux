@@ -1,0 +1,200 @@
+19:37:39 **** Build of configuration Debug for project first_cpp ****
+make all 
+Building file: ../SayHello.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"SayHello.d" -MT"SayHello.d" -o "SayHello.o" "../SayHello.cpp"
+Finished building: ../SayHello.cpp
+ 
+Building file: ../test_drv.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"test_drv.d" -MT"test_drv.d" -o "test_drv.o" "../test_drv.cpp"
+Finished building: ../test_drv.cpp
+ 
+Building target: first_cpp
+Invoking: GCC C++ Linker
+g++  -o "first_cpp"  ./SayHello.o ./test_drv.o   
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 0 has invalid symbol index 11
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 1 has invalid symbol index 12
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 2 has invalid symbol index 2
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 3 has invalid symbol index 2
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 4 has invalid symbol index 11
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 5 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 6 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 7 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 8 has invalid symbol index 12
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 9 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 10 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 11 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 12 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 13 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 14 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 15 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 16 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 17 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 18 has invalid symbol index 13
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_info): relocation 19 has invalid symbol index 21
+/usr/bin/ld: /usr/lib/debug/usr/lib/x86_64-linux-gnu/crt1.o(.debug_line): relocation 0 has invalid symbol index 2
+/usr/lib/gcc/x86_64-linux-gnu/4.8/../../../x86_64-linux-gnu/crt1.o：在函数‘_start’中：
+(.text+0x20)：对‘main’未定义的引用
+collect2: error: ld returned 1 exit status
+make: *** [first_cpp] 错误 1
+19:38:20 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+Building file: ../SayHello.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"SayHello.d" -MT"SayHello.d" -o "SayHello.o" "../SayHello.cpp"
+../SayHello.cpp:19:17: error: ISO C++ forbids declaration of ‘Hello’ with no type [-fpermissive]
+ SayHello::Hello() {
+                 ^
+../SayHello.cpp:19:1: error: prototype for ‘int SayHello::Hello()’ does not match any in class ‘SayHello’
+ SayHello::Hello() {
+ ^
+In file included from ../SayHello.cpp:8:0:
+../SayHello.h:15:7: error: candidate is: void SayHello::Hello()
+  void Hello();
+       ^
+make: *** [SayHello.o] 错误 1
+19:38:54 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+Building file: ../SayHello.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"SayHello.d" -MT"SayHello.d" -o "SayHello.o" "../SayHello.cpp"
+../SayHello.cpp:19:17: error: ISO C++ forbids declaration of ‘Hello’ with no type [-fpermissive]
+ SayHello::Hello() {
+                 ^
+../SayHello.cpp:19:1: error: prototype for ‘int SayHello::Hello()’ does not match any in class ‘SayHello’
+ SayHello::Hello() {
+ ^
+In file included from ../SayHello.cpp:8:0:
+../SayHello.h:15:7: error: candidate is: void SayHello::Hello()
+  void Hello();
+       ^
+make: *** [SayHello.o] 错误 1
+19:38:56 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+Building file: ../SayHello.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"SayHello.d" -MT"SayHello.d" -o "SayHello.o" "../SayHello.cpp"
+../SayHello.cpp:19:17: error: ISO C++ forbids declaration of ‘Hello’ with no type [-fpermissive]
+ SayHello::Hello() {
+                 ^
+../SayHello.cpp:19:1: error: prototype for ‘int SayHello::Hello()’ does not match any in class ‘SayHello’
+ SayHello::Hello() {
+ ^
+In file included from ../SayHello.cpp:8:0:
+../SayHello.h:15:7: error: candidate is: void SayHello::Hello()
+  void Hello();
+       ^
+make: *** [SayHello.o] 错误 1
+19:39:01 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+Building file: ../SayHello.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"SayHello.d" -MT"SayHello.d" -o "SayHello.o" "../SayHello.cpp"
+../SayHello.cpp:19:17: error: ISO C++ forbids declaration of ‘Hello’ with no type [-fpermissive]
+ SayHello::Hello() {
+                 ^
+../SayHello.cpp:19:1: error: prototype for ‘int SayHello::Hello()’ does not match any in class ‘SayHello’
+ SayHello::Hello() {
+ ^
+In file included from ../SayHello.cpp:8:0:
+../SayHello.h:15:7: error: candidate is: void SayHello::Hello()
+  void Hello();
+       ^
+make: *** [SayHello.o] 错误 1
+19:39:06 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+Building file: ../SayHello.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"SayHello.d" -MT"SayHello.d" -o "SayHello.o" "../SayHello.cpp"
+Finished building: ../SayHello.cpp
+ 
+Building file: ../test_drv.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"test_drv.d" -MT"test_drv.d" -o "test_drv.o" "../test_drv.cpp"
+Finished building: ../test_drv.cpp
+ 
+Building target: first_cpp
+Invoking: GCC C++ Linker
+g++  -o "first_cpp"  ./SayHello.o ./test_drv.o   
+Finished building target: first_cpp
+ 
+19:39:20 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+19:39:23 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+19:40:39 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+19:42:26 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+Building target: first_cpp
+Invoking: GCC C++ Linker
+g++  -o "first_cpp"  ./SayHello.o ./test_drv.o   
+Finished building target: first_cpp
+ 
+19:42:30 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+19:42:50 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+19:51:48 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+19:52:12 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+19:52:14 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:05 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:23 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:29 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:31 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:32 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:33 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:33 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:33 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:33 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:23:34 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:24:24 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:24:24 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+make: 没有什么可以做的为 `all'。
+16:24:29 **** Incremental Build of configuration Debug for project first_cpp ****
+make all 
+Building file: ../test_drv.cpp
+Invoking: GCC C++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"test_drv.d" -MT"test_drv.d" -o "test_drv.o" "../test_drv.cpp"
+Finished building: ../test_drv.cpp
+ 
+Building target: first_cpp
+Invoking: GCC C++ Linker
+g++  -o "first_cpp"  ./SayHello.o ./test_drv.o   
+Finished building target: first_cpp
+ 
